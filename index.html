@@ -2,16 +2,27 @@
 <html>
 
 <head>
-  <title>EcoSnap</title>
+<title>EcoSnap AI Waste Detector</title>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
 </head>
 
 <body>
 
 <h1>EcoSnap</h1>
-<p>Upload waste image to detect disposal type.</p>
 
-<input type="file">
+<p>Detect waste type using AI</p>
+
+<button onclick="init()">Start Camera</button>
+
+<div id="webcam-container"></div>
+
+<div id="label-container"></div>
+
+<script src="script.js"></script>
 
 </body>
 
-</html> 
+</html>
