@@ -1,5 +1,8 @@
-EcoSnap – AI Waste Sorting Assistant
+Eco Waste Detector
 
-This project uses an AI image classifier to identify waste items and recommend proper disposal methods such as recycling, composting, or landfill.
+An AI-powered waste classification tool built with Teachable Machine and TensorFlow.js.
 
-Created for the EcoHacks hackathon.
+The system uses a trained image model to detect waste types such as recyclable, compostable, and hazardous materials.
+
+Goal:
+Help people dispose waste correctly and reduce environmental pollution.
