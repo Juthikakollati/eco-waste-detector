@@ -1,15 +1,31 @@
-body{
-text-align:center;
-font-family:Arial;
-background:#eaf7ea;
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    background-color: #eaf7ea;
+    margin: 50px;
 }
 
-h1{
-color:#2e7d32;
+h1 {
+    color: #2e7d32;
 }
 
-button{
-padding:10px;
-margin:20px;
-font-size:16px;
+button {
+    padding: 10px 20px;
+    margin: 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+input[type="file"] {
+    margin: 20px;
+}
+
+#webcam-container {
+    margin-top: 20px;
+}
+
+#label-container {
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
 }
