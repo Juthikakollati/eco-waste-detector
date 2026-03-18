@@ -2,83 +2,100 @@ const URL = "./model/";
 
 let model, webcam, labelContainer, maxPredictions;
 
+// Initialize webcam AI
 async function init() {
 
-const modelURL = URL + "model.json";
-const metadataURL = URL + "metadata.json";
+    const modelURL = URL + "model.json";
+    const metadataURL = URL + "metadata.json";
 
-model = await tmImage.load(modelURL, metadataURL);
-maxPredictions = model.getTotalClasses();
+    model = await tmImage.load(modelURL, metadataURL);
+    maxPredictions = model.getTotalClasses();
 
-const flip = true;
+    const flip = true;
 
-webcam = new tmImage.Webcam(200, 200, flip);
+    webcam = new tmImage.Webcam(200, 200, flip);
+    await webcam.setup();
+    await webcam.play();
 
-await webcam.setup();
-await webcam.play();
+    window.requestAnimationFrame(loop);
 
-window.requestAnimationFrame(loop);
+    document.getElementById("webcam-container").appendChild(webcam.canvas);
 
-document.getElementById("webcam-container").appendChild(webcam.canvas);
-
-labelContainer = document.getElementById("label-container");
+    labelContainer = document.getElementById("label-container");
 
 }
 
+// Webcam loop
 async function loop() {
+    webcam.update();
+    await predictWebcam();
+    window.requestAnimationFrame(loop);
+}
 
-webcam.update();
-await predict();
-window.requestAnimationFrame(loop);
+// Predict from webcam
+async function predictWebcam() {
+
+    const prediction = await model.predict(webcam.canvas);
+
+    let highest = prediction[0];
+
+    for (let i = 1; i < prediction.length; i++) {
+        if (prediction[i].probability > highest.probability) {
+            highest = prediction[i];
+        }
+    }
+
+    displayResult(highest);
 
 }
 
-async function predict() {
+// Upload image prediction
+document.getElementById("imageUpload").addEventListener("change", async function (event) {
 
-const prediction = await model.predict(webcam.canvas);
+    const file = event.target.files[0];
 
-let highest = prediction[0];
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
 
-for (let i = 1; i < prediction.length; i++) {
+    img.onload = async function () {
 
-if (prediction[i].probability > highest.probability) {
-highest = prediction[i];
-}
+        const prediction = await model.predict(img);
 
-}
+        let highest = prediction[0];
 
-let resultText = "";
+        for (let i = 1; i < prediction.length; i++) {
+            if (prediction[i].probability > highest.probability) {
+                highest = prediction[i];
+            }
+        }
 
-if (highest.className === "Recycle") {
+        displayResult(highest);
+    }
 
-resultText =
-"Detected: Recyclable Item ♻️ <br> Dispose in Recycling Bin";
+});
 
-}
+// Display result function
+function displayResult(highest) {
 
-else if (highest.className === "Compost") {
+    let resultText = "";
 
-resultText =
-"Detected: Compostable Waste 🌱 <br> Dispose in Compost Bin";
+    if (highest.className === "Recycle") {
+        resultText =
+            "Detected: Recyclable Item ♻️ <br> Dispose in Recycling Bin";
+    }
+    else if (highest.className === "Compost") {
+        resultText =
+            "Detected: Compostable Waste 🌱 <br> Dispose in Compost Bin";
+    }
+    else if (highest.className === "Hazardous") {
+        resultText =
+            "Detected: Hazardous Waste ⚠️ <br> Take to Special Waste Center";
+    }
+    else {
+        resultText = "Detected: " + highest.className;
+    }
 
-}
-
-else if (highest.className === "Hazardous") {
-
-resultText =
-"Detected: Hazardous Waste ⚠️ <br> Take to Special Waste Center";
-
-}
-
-else {
-
-resultText =
-"Detected: " + highest.className;
-
-}
-
-document.getElementById("label-container").innerHTML =
-resultText + "<br><br>Confidence: " +
-(highest.probability * 100).toFixed(1) + "%";
-
+    document.getElementById("label-container").innerHTML =
+        resultText + "<br><br>Confidence: " +
+        (highest.probability * 100).toFixed(1) + "%";
 }
