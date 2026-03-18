@@ -5,8 +5,10 @@
 <title>EcoSnap AI Waste Detector</title>
 <link rel="stylesheet" href="style.css">
 
+<!-- TensorFlow.js and Teachable Machine -->
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+
 </head>
 
 <body>
@@ -15,10 +17,13 @@
 
 <p>Detect waste type using AI</p>
 
+<!-- Buttons -->
 <button onclick="init()">Start Camera</button>
+<br>
+Upload Image: <input type="file" id="imageUpload">
 
+<!-- Output -->
 <div id="webcam-container"></div>
-
 <div id="label-container"></div>
 
 <script src="script.js"></script>
