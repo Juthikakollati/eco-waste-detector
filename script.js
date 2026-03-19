@@ -1,101 +1,81 @@
-const URL = "./model/";
+// script.js - Fully Fixed for Eco Waste Detector
 
-let model, webcam, labelContainer, maxPredictions;
+let model, webcam, maxPredictions;
 
-// Initialize webcam AI
+// Initialize the AI model and webcam
 async function init() {
+  const modelURL = "./model/model.json";
+  const metadataURL = "./model/metadata.json";
 
-    const modelURL = URL + "model.json";
-    const metadataURL = URL + "metadata.json";
-
+  try {
     model = await tmImage.load(modelURL, metadataURL);
     maxPredictions = model.getTotalClasses();
+    console.log("Model loaded successfully!");
 
-    const flip = true;
-
-    webcam = new tmImage.Webcam(200, 200, flip);
+    // Setup webcam
+    const flip = true; // mirror webcam
+    webcam = new tmImage.Webcam(400, 400, flip);
     await webcam.setup();
     await webcam.play();
-
-    window.requestAnimationFrame(loop);
-
     document.getElementById("webcam-container").appendChild(webcam.canvas);
 
-    labelContainer = document.getElementById("label-container");
-
-}
-
-// Webcam loop
-async function loop() {
-    webcam.update();
-    await predictWebcam();
     window.requestAnimationFrame(loop);
+
+  } catch (err) {
+    console.error("Failed to load model or webcam:", err);
+    alert("Error loading AI model. Check console for details.");
+  }
 }
 
-// Predict from webcam
-async function predictWebcam() {
-
-    const prediction = await model.predict(webcam.canvas);
-
-    let highest = prediction[0];
-
-    for (let i = 1; i < prediction.length; i++) {
-        if (prediction[i].probability > highest.probability) {
-            highest = prediction[i];
-        }
-    }
-
-    displayResult(highest);
-
+// Main loop for webcam
+async function loop() {
+  webcam.update();
+  await predict();
+  window.requestAnimationFrame(loop);
 }
 
-// Upload image prediction
-document.getElementById("imageUpload").addEventListener("change", async function (event) {
+// Run prediction on current webcam frame
+async function predict() {
+  if (!model) return;
 
-    const file = event.target.files[0];
+  const prediction = await model.predict(webcam.canvas);
+  let highest = prediction[0];
 
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
+  prediction.forEach(p => {
+    if (p.probability > highest.probability) highest = p;
+  });
 
-    img.onload = async function () {
+  displayResult(highest);
+}
 
-        const prediction = await model.predict(img);
+// Display the prediction and show the Next button
+function displayResult(highest) {
+  const labelContainer = document.getElementById("label-container");
+  labelContainer.innerHTML = `${highest.className}: ${(highest.probability * 100).toFixed(2)}%`;
 
-        let highest = prediction[0];
+  // Show Next button after prediction
+  document.getElementById("nextBtn").style.display = "inline-block";
+}
 
-        for (let i = 1; i < prediction.length; i++) {
-            if (prediction[i].probability > highest.probability) {
-                highest = prediction[i];
-            }
-        }
-
-        displayResult(highest);
-    }
-
+// Handle "Next" button click
+document.getElementById("nextBtn").addEventListener("click", () => {
+  alert("Next step clicked! Implement your workflow here.");
+  document.getElementById("nextBtn").style.display = "none";
 });
 
-// Display result function
-function displayResult(highest) {
+// Handle image upload prediction
+document.getElementById("imageUpload").addEventListener("change", async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
-    let resultText = "";
-
-    if (highest.className === "Recycle") {
-        resultText =
-            "Detected: Recyclable Item ♻️ <br> Dispose in Recycling Bin";
-    }
-    else if (highest.className === "Compost") {
-        resultText =
-            "Detected: Compostable Waste 🌱 <br> Dispose in Compost Bin";
-    }
-    else if (highest.className === "Hazardous") {
-        resultText =
-            "Detected: Hazardous Waste ⚠️ <br> Take to Special Waste Center";
-    }
-    else {
-        resultText = "Detected: " + highest.className;
-    }
-
-    document.getElementById("label-container").innerHTML =
-        resultText + "<br><br>Confidence: " +
-        (highest.probability * 100).toFixed(1) + "%";
-}
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  img.onload = async () => {
+    const prediction = await model.predict(img);
+    let highest = prediction[0];
+    prediction.forEach(p => {
+      if (p.probability > highest.probability) highest = p;
+    });
+    displayResult(highest);
+  };
+});
