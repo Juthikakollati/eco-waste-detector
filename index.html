@@ -1,33 +1,50 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-<title>EcoSnap AI Waste Detector</title>
-<link rel="stylesheet" href="style.css">
-
-<!-- TensorFlow.js and Teachable Machine -->
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
-
+  <meta charset="UTF-8">
+  <title>Eco Waste Detector</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #webcam-container, #label-container {
+      margin: 20px auto;
+    }
+    #nextBtn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+    input[type="file"] {
+      margin-top: 15px;
+    }
+  </style>
 </head>
-
 <body>
 
-<h1>EcoSnap</h1>
+  <h1>Eco Waste Detector</h1>
 
-<p>Detect waste type using AI</p>
+  <!-- Webcam feed -->
+  <div id="webcam-container"></div>
 
-<!-- Buttons -->
-<button onclick="init()">Start Camera</button>
-<br>
-Upload Image: <input type="file" id="imageUpload">
+  <!-- Prediction label -->
+  <div id="label-container"></div>
 
-<!-- Output -->
-<div id="webcam-container"></div>
-<div id="label-container"></div>
+  <!-- Upload image -->
+  <input type="file" id="imageUpload" accept="image/*">
 
-<script src="script.js"></script>
+  <!-- Next button -->
+  <button id="nextBtn" style="display:none">Next</button>
 
+  <!-- Include your script -->
+  <script src="script.js"></script>
+  <script>
+    // Start the model and webcam automatically
+    init();
+  </script>
 </body>
-
 </html>
