@@ -13,7 +13,6 @@ The AI model was created using Google Teachable Machine, a simple platform for b
 
 Dataset Information 
 The dataset includes images collected from publicly available sources (google), covering a variety of everyday waste items. The classes trained are:
-
 Recyclable – plastic bottles, cans, paper, cardboard
 Compostable – fruit and vegetable peels, food scraps, plant waste
 Hazardous – batteries, electronics, chemicals, sharp objects
